@@ -70,23 +70,25 @@ public class DatabaseManager {
     //SzabadSzobakListazasa típus
     public static ArrayList<Szoba> szabadSzobakListazasa(ArrayList<String> intervallum) {
         try {
+            String k = intervallum.get(0).trim();
+            String v = intervallum.get(1).trim();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             Date intervallum0 = df.parse(intervallum.get(0));
             Date intervallum1 = df.parse(intervallum.get(1));
 //            java.sql.Date intervallum0 = java.sql.Date.valueOf(intervallum.get(0));
 //            java.sql.Date intervallum1 = java.sql.Date.valueOf(intervallum.get(1));
             ArrayList<Szoba> szabadSzobak = new ArrayList<>();
-            prepStatement = DatabaseConnection.getConnection().prepareStatement("select * from Foglalas inner join Szoba on Foglalas.Szobaszam = Szoba.Szobaszam");
-            resultset = prepStatement.executeQuery();
-            while (resultset.next()) {
-                if (intervallum1.before(resultset.getDate("Foglalas_kezdete")) || intervallum0.after(resultset.getDate("Foglalas_vege"))) {
-                    szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
-                }
-            }
             prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM Szoba sz LEFT JOIN Foglalas f ON sz.Szobaszam = f.Szobaszam WHERE f.Szobaszam IS NULL");//szobák, amire egyáltalán nincs foglalás
             resultset = prepStatement.executeQuery();
             while (resultset.next()) {
                 szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
+            }
+            
+
+            prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT distinct sz.Szobaszam, sz.Felszereltseg, sz.Ferohelyek, sz.Alapar FROM Szoba sz JOIN Foglalas f ON sz.Szobaszam=f.Szobaszam WHERE (f.Foglalas_vege<'" + k + "' and f.Foglalas_kezdete<'" + k + "') OR (f.Foglalas_vege >'" + v + "' and f.Foglalas_kezdete>'" + v + "')");
+            resultset = prepStatement.executeQuery();
+            while (resultset.next()) {
+                 szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
             }
             if (szabadSzobak.isEmpty()) {
                 return null;
@@ -101,6 +103,7 @@ public class DatabaseManager {
         }
     }
 
+    
     //FoglalasokKezelese típus
     //TODO: Még hátralevő feladatok FoglalasModositasa,
     public static boolean foglalasTorlese(int foglalasID) {
@@ -118,19 +121,19 @@ public class DatabaseManager {
 
     public static boolean szobaLefoglalasa(String felhasznaloNev, int szobaszam, ArrayList<String> intervallum) {
         try {
+            String k = intervallum.get(0).trim();
+            String v = intervallum.get(1).trim();
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             df.setTimeZone(TimeZone.getDefault());
             Date intervallum0 = df.parse(intervallum.get(0));
             Date intervallum1 = df.parse(intervallum.get(1));
- //           java.sql.Date intervallum0 = java.sql.Date.valueOf(intervallum.get(0));
+            //           java.sql.Date intervallum0 = java.sql.Date.valueOf(intervallum.get(0));
 //            java.sql.Date intervallum1 = java.sql.Date.valueOf(intervallum.get(1));
             ArrayList<Szoba> szabadSzobak = new ArrayList<>();
-            prepStatement = DatabaseConnection.getConnection().prepareStatement("select * from Foglalas inner join Szoba on Foglalas.Szobaszam = Szoba.Szobaszam");
+            prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT distinct sz.Szobaszam, sz.Felszereltseg, sz.Ferohelyek, sz.Alapar FROM Szoba sz JOIN Foglalas f ON sz.Szobaszam=f.Szobaszam WHERE (f.Foglalas_vege<'" + k + "' and f.Foglalas_kezdete<'" + k + "') OR (f.Foglalas_vege >'" + v + "' and f.Foglalas_kezdete>'" + v + "')");
             resultset = prepStatement.executeQuery();
             while (resultset.next()) {
-                if (intervallum1.before(resultset.getDate("Foglalas_kezdete")) || intervallum0.after(resultset.getDate("Foglalas_vege"))) {
-                    szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
-                }
+                 szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
             }
             prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM Szoba sz LEFT JOIN Foglalas f ON sz.Szobaszam = f.Szobaszam WHERE f.Szobaszam IS NULL");//szobák, amire egyáltalán nincs foglalás
             resultset = prepStatement.executeQuery();
@@ -203,7 +206,7 @@ public class DatabaseManager {
 
     //Fizetes típus
     public static boolean elemFizetese(int foglalasID) {
-        
+
         try {
             prepStatement = DatabaseConnection.getConnection().prepareStatement("update Foglalas set Kifizette=true where FoglalasID=(?)");
             prepStatement.setInt(1, foglalasID);
