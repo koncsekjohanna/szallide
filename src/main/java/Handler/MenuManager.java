@@ -28,9 +28,6 @@ public class MenuManager
         {
             switch (szerepkor)
             {
-                case admin:
-
-                    break;
                 case karbantarto:
                     KarbantartoMenu karbantartoMenu = new KarbantartoMenu(m);
                     karbantartoMenu.run();
@@ -45,10 +42,6 @@ public class MenuManager
                 case vendeg:
                     VendegMenu vendegMenu = new VendegMenu(m);
                     return vendegMenu.Run();
-                case vezeto:
-
-                    break;
-
                 default:
 
                     break;

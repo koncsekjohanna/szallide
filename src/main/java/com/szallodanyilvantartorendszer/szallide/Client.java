@@ -38,12 +38,10 @@ import java.util.TimeZone;
  */
 public class Client
 {
-    //DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     
-   /* DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    df.setTimeZone(TimeZone.getTimeZone());*/
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static Felhasznalo ACTUAL_USER = null;
+    Felhasznalo user = null;
 
     public static Felhasznalo getACTUAL_USER() {
         return ACTUAL_USER;
@@ -55,7 +53,7 @@ public class Client
     
     
 
-    public Message Bejelentkezes (Message m) throws IOException{
+    public Message Bejelentkezes () throws IOException{
        // df.setTimeZone(TimeZone.getDefault());
         String felhasznalonev, jelszo;
         System.out.println("\n*********************************\n\t*");
@@ -77,7 +75,6 @@ public class Client
     }
 
     //ClientMuveletFeldolgozas processor = new ClientMuveletFeldolgozas();
-    Felhasznalo user = null;
 
     private void ClientRun()
     {
@@ -126,7 +123,8 @@ public class Client
                 }
 
                 // Összeszedem a bejelentkezési adatokat, majd elküldöm a szerver felé
-                Message cm = Bejelentkezes(new Message(new Head(), new Body()));
+               // Message cm = Bejelentkezes(new Message(new Head(), new Body()));
+               Message cm = Bejelentkezes();
                 String jsonString = mapper.writeValueAsString(cm);
                 outputstr.writeUTF(jsonString); //kiiratás
                 outputstr.flush();

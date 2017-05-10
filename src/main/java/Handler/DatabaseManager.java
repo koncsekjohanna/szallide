@@ -36,15 +36,6 @@ public class DatabaseManager {
     private static final String KARBANTARTO = "karbantarto";
     private static final String VEZETO = "vezeto";
 
-    //bejegyzes allapotok
-    private static final String REGISZTRALVA = "regisztralva";
-    private static final String FOLYAMATBAN = "folyamatban";
-    private static final String ELVEGEZVE = "elvegezve";
-
-    //bejegyzes tipusok
-    private static final String TAKARITAS = "takaritas";
-    private static final String KARBANTARTAS = "karbantartas";
-
     //Bejelentjezes típus
     public static Szerepkorok.Szerepkor bejelentkezes(String felhasznaloNev, String jelszo) {
         try {

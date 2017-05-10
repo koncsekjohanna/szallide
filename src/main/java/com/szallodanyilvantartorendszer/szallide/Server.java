@@ -34,13 +34,7 @@ public class Server {
         this.port = port;
     }
 
-    public static void main(String args[]) {
-        DatabaseConnection.connect();
-        new Server(1112).startServer(); //server objektum készítése, alapértelemezett porttal
-        DatabaseConnection.close();
-    }
-
-    @SuppressWarnings("CallToPrintStackTrace")
+       @SuppressWarnings("CallToPrintStackTrace")
     public void startServer() {
         try {
             serverSock = new ServerSocket(port);
@@ -61,6 +55,12 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+    
+     public static void main(String args[]) {
+        DatabaseConnection.connect();
+        new Server(1112).startServer(); //server objektum készítése, alapértelemezett porttal
+        DatabaseConnection.close();
     }
 
 }
