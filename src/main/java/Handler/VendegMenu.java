@@ -35,25 +35,18 @@ public class VendegMenu {
     static public String Menu
             = "1 - Szabad szobak listazasa\n"
             + "2 - Foglalasok kezelese\n"
-            + "3 - Bejegyzes kezelese\n"
-            + "4 - Fizetes\n"
-            + "5 - Kilepes\n"
+            + "3 - Fizetes\n"
+            + "4 - Kilepes\n"
             + "Parancs: ";
     static public String FoglalasokKezeleseMenu
             = "1 - Foglalas letrehozasa\n"
-            + "2 - Foglalas modositasa\n"
+            + "2 - Foglalas megtekintese\n"
             + "3 - Foglalas torlese\n"
-            + "4 - Foglalas megtekintese\n"
-            + "5 - Vissza\n"
+            + "4 - Vissza\n"
             + "Parancs: ";
     static public String FoglalasLetrehozasaMenu
             = "1 - Foglalas erre az intervallumra\n"
             + "2 - Visszalepes\n"
-            + "Parancs: ";
-    static public String BejegyzesKezeleseMenu
-            = "1 - Bejegyzes irasa\n"
-            + "2 - Bejegyzes megtekintese\n"
-            + "3 - Vissza\n"
             + "Parancs: ";
     static public String FizetesMenu
             = "1 - Elemek fizetese\n"
@@ -70,9 +63,6 @@ public class VendegMenu {
         switch (message.getHead().getTipus()) {
             case Bejelentkezes:
                 return Fomenu();
-            case BejegyzesKezeles:
-                System.out.println(BejegyzesKezeleseMenu);
-                break;
             case Fizetes:
                 return fizetesUzenetSzervernek(message);
             case FoglalasokKezelese:
@@ -100,16 +90,12 @@ public class VendegMenu {
             case "2":
                 message.getHead().setTipus(ProtokollUzenetek.Tipusok.FoglalasokKezelese);
                 message = FoglalasokKezelese();
-                break;
+                break;         
             case "3":
-                message.getHead().setTipus(ProtokollUzenetek.Tipusok.BejegyzesKezeles);
-               // message = BejegyzesKezeles();
-                break;
-            case "4":
                 message.getHead().setTipus(ProtokollUzenetek.Tipusok.Fizetes);
                 message = Fizetes();
                 break;
-            case "5":
+            case "4":
                 message.getHead().setTipus(ProtokollUzenetek.Tipusok.Kilepes);
                 message = Kilepes();
                 break;
@@ -138,9 +124,6 @@ Message foglalasUzenetSzervernek(Message message) {
             case FoglalasTorleseBefejezes:
                 message = FoglalasTorlese_S();
                 break;
-            case FoglalasModositasaBefejezes:
-                message = FoglalasModositasa_S();
-                break;
         }
         return message;
     }
@@ -161,12 +144,14 @@ Message foglalasUzenetSzervernek(Message message) {
         String kezdoDatumStr = null, vegDatumStr = null;
         Date kezdoDatum = null, vegDatum = null;
         try {
-            System.out.print("Adja meg a foglalas kezdodatumat (pelda: 2017-04-12): ");
+            System.out.print("Adja meg a megtekinteni kivan idoszak kezdodatumat (pelda: 2017-04-12): ");
             kezdoDatumStr = br.readLine();
-            System.out.print("Adja meg a foglalas vegdatumat (pelda: 2017-04-12): ");
+            kezdoDatum=df.parse(kezdoDatumStr);
+            System.out.print("Adja meg a megtekinteni kivan idoszak vegdatumat (pelda: 2017-04-12): ");
             vegDatumStr = br.readLine();
+            vegDatum=df.parse(vegDatumStr);
             if (DateTimeComparator.getDateOnlyInstance().compare(kezdoDatum, vegDatum) == 1) {
-                throw new Exception("A foglalas kezdodatuma nem lehet kesobbi, mint a vegdatum");
+                throw new Exception("A megtekinteni kivan idoszak kezdodatuma nem lehet kesobbi, mint a vegdatum");
             }
         } catch (ParseException exc) {
             System.err.println("!!! Ervenytelen datum !!!");
@@ -176,7 +161,6 @@ Message foglalasUzenetSzervernek(Message message) {
             System.out.println("!!! Hiba a datumok megadasanak modjaban !!!");
             message = SzabadSzobakListazasa();
         }
-
         ArrayList<String> kezdoEsVeg = new ArrayList<>();
         kezdoEsVeg.add(kezdoDatumStr);
         kezdoEsVeg.add(vegDatumStr);
@@ -214,18 +198,14 @@ Message foglalasUzenetSzervernek(Message message) {
                 message = FoglalasLetrehozasa();
                 break;
             case "2":
-                message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasModositasa);
-                message = FoglalasModositasa();
-                break;
-            case "3":
                 message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasTorlese);
                 message = FoglalasTorlese();
                 break;
-            case "4":
+            case "3":
                 message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasMegtekintese);
                 message = FoglalasMegtekintese();
                 break;
-            case "5":
+            case "4":
                 return Fomenu();
             default:
                 System.out.println("--------------------------");
@@ -284,11 +264,8 @@ Message foglalasUzenetSzervernek(Message message) {
         if ((boolean) message.getBody().getData() == false) {
             System.out.println("Sikertelen foglalas!!!");
         } else {
-
             System.out.println("Sikeres foglalas! ");
-
         }
-
         message.getHead().setTipus(ProtokollUzenetek.Tipusok.Bejelentkezes);
         message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FeladatBefejezes);
         return message;
@@ -346,21 +323,6 @@ Message foglalasUzenetSzervernek(Message message) {
         return message;
     }
 
-    /*public Message FoglalasErreAzIntervallumra() {
-
-        return message;
-    }*/
-// --- Foglalások kezelése ---
-
-    public Message FoglalasModositasa() {
-
-        return message;
-    }
-
-    private Message FoglalasModositasa_S() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 // +++ Fizetés +++
     public Message Fizetes() throws IOException {
         System.out.println("--------------------------");
@@ -369,12 +331,12 @@ Message foglalasUzenetSzervernek(Message message) {
         standardInput = br.readLine();
         switch (standardInput) {
             case "1":
-                message.getHead().setFeladat(ProtokollUzenetek.Feladatok.ElemFizetese);
-                message = ElemFizetese();
-                break;
-            case "2":
                 message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FizetendoElemekMegtekintese);
                 message = FizetendoElemekMegtekintese();
+                break;
+            case "2":
+                message.getHead().setFeladat(ProtokollUzenetek.Feladatok.ElemFizetese);
+                message = ElemFizetese();
                 break;
             case "3":
                 return Fomenu();
