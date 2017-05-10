@@ -203,6 +203,7 @@ public class DatabaseManager {
 
     //Fizetes típus
     public static boolean elemFizetese(int foglalasID) {
+        
         try {
             prepStatement = DatabaseConnection.getConnection().prepareStatement("update Foglalas set Kifizette=true where FoglalasID=(?)");
             prepStatement.setInt(1, foglalasID);

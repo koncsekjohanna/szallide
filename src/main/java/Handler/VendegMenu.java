@@ -49,8 +49,8 @@ public class VendegMenu {
             + "2 - Visszalepes\n"
             + "Parancs: ";
     static public String FizetesMenu
-            = "1 - Elemek fizetese\n"
-            + "2 - Fizendo elemek megtekintese\n"
+            = "1 - Fizetendo elemek megtekintese\n"
+            + "2 - Elemek fizetese\n"
             + "3 - Vissza\n"
             + "Parancs: ";
 
@@ -198,12 +198,12 @@ Message foglalasUzenetSzervernek(Message message) {
                 message = FoglalasLetrehozasa();
                 break;
             case "2":
-                message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasTorlese);
-                message = FoglalasTorlese();
-                break;
-            case "3":
                 message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasMegtekintese);
                 message = FoglalasMegtekintese();
+                break;
+            case "3":
+                message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FoglalasTorlese);
+                message = FoglalasTorlese();
                 break;
             case "4":
                 return Fomenu();
@@ -364,14 +364,14 @@ Message foglalasUzenetSzervernek(Message message) {
         return message;
     }
 
-    private Message ElemFizetese() {
+    private Message ElemFizetese() throws IOException {
         System.out.println(">> Elem fizetese <<");
         System.out.println("Adja meg a fizetni kivant foglalas azonositojat! ");
         int foglalasID = 0;
         try {
             foglalasID = Integer.parseInt(br.readLine());
-        } catch (IOException ex) {
-            System.out.println("Hibas adat");
+        } catch (NumberFormatException ex) {
+            System.out.println("Nem megfelelo azonosito");
             message = ElemFizetese();
             //Logger.getLogger(VendegMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
