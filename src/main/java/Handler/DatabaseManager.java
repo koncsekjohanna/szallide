@@ -160,15 +160,11 @@ public class DatabaseManager {
             //           java.sql.Date intervallum0 = java.sql.Date.valueOf(intervallum.get(0));
 //            java.sql.Date intervallum1 = java.sql.Date.valueOf(intervallum.get(1));
             ArrayList<Szoba> szabadSzobak = new ArrayList<>();
-            prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT distinct sz.Szobaszam, sz.Felszereltseg, sz.Ferohelyek, sz.Alapar FROM Szoba sz JOIN Foglalas f ON sz.Szobaszam=f.Szobaszam WHERE (f.Foglalas_vege<'" + k + "' and f.Foglalas_kezdete<'" + k + "') OR (f.Foglalas_vege >'" + v + "' and f.Foglalas_kezdete>'" + v + "')");
+            prepStatement = DatabaseConnection.getConnection().prepareStatement
+            ("select * from Szoba where szobaszam NOT IN (select szobaszam from Foglalas WHERE ((Foglalas_kezdete<'"+k+"' and Foglalas_vege>'"+k+"' and Foglalas_vege<='"+v+"') OR (Foglalas_kezdete>='"+k+"' and Foglalas_vege<='"+v+"') OR (Foglalas_vege>='"+v+"' and Foglalas_kezdete<'"+v+"' and Foglalas_kezdete>'"+k+"') OR (Foglalas_kezdete<'"+k+"' and Foglalas_vege>'"+v+"')))");
             resultset = prepStatement.executeQuery();
             while (resultset.next()) {
                  szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
-            }
-            prepStatement = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM Szoba sz LEFT JOIN Foglalas f ON sz.Szobaszam = f.Szobaszam WHERE f.Szobaszam IS NULL");//szobák, amire egyáltalán nincs foglalás
-            resultset = prepStatement.executeQuery();
-            while (resultset.next()) {
-                szabadSzobak.add(new Szoba(resultset.getInt("Szobaszam"), resultset.getString("Felszereltseg"), resultset.getInt("Ferohelyek"), resultset.getInt("Alapar")));
             }
             if (szabadSzobak.isEmpty()) {
                 return false;
