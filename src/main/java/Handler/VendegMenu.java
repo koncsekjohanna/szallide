@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTimeComparator;
@@ -30,6 +31,7 @@ public class VendegMenu {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     String standardInput;
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    
     boolean vissza = false;
 
     static public String Menu
@@ -142,6 +144,7 @@ Message foglalasUzenetSzervernek(Message message) {
 // +++ Szabad szobák listázása +++
     public Message SzabadSzobakListazasa() {
         String kezdoDatumStr = null, vegDatumStr = null;
+        
         Date kezdoDatum = null, vegDatum = null;
         try {
             System.out.print("Adja meg a megtekinteni kivan idoszak kezdodatumat (pelda: 2017-04-12): ");
@@ -150,6 +153,7 @@ Message foglalasUzenetSzervernek(Message message) {
             System.out.print("Adja meg a megtekinteni kivan idoszak vegdatumat (pelda: 2017-04-12): ");
             vegDatumStr = br.readLine();
             vegDatum=df.parse(vegDatumStr);
+            //df.setTimeZone(TimeZone.getTimeZone("CEST"));
             if (DateTimeComparator.getDateOnlyInstance().compare(kezdoDatum, vegDatum) == 1) {
                 throw new Exception("A megtekinteni kivan idoszak kezdodatuma nem lehet kesobbi, mint a vegdatum");
             }
@@ -262,7 +266,7 @@ Message foglalasUzenetSzervernek(Message message) {
     private Message FoglalasLetrehozasa_S() {
 
         if ((boolean) message.getBody().getData() == false) {
-            System.out.println("Sikertelen foglalas!!!");
+            System.out.println("Sikertelen foglalas!!!\nA szoba sajnos foglalt az adott időpontban!\nKérjük próbájon meg egy másik szobát lefoglalni.\nKöszönjük!");
         } else {
             System.out.println("Sikeres foglalas! ");
         }
@@ -354,7 +358,9 @@ Message foglalasUzenetSzervernek(Message message) {
     public Message Kilepes() {
         message.getHead().setTipus(ProtokollUzenetek.Tipusok.Kilepes);
         message.getHead().setFeladat(ProtokollUzenetek.Feladatok.FeladatBefejezes);
+        System.out.println("Sikeres kijelentkezés.");
         return message;
+       
     }
 
     private Message FizetendoElemekMegtekintese() {

@@ -65,13 +65,14 @@ public class ServerConnection implements Runnable {
                 }
             }
 
-            System.out.println("***Connection closed for client " + id + "***");
+            
             input.close();
             os.close();
             clientSocket.close();
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("***Connection closed for client " + id + "***");
         }
     }
 

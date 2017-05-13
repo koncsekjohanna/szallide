@@ -173,6 +173,7 @@ public class Client
             outputstr.close();
             input.close();
             clientSocket.close();
+
         }
         catch (UnknownHostException e)
         {
