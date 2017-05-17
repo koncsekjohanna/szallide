@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 
 /**
  *
@@ -214,6 +215,27 @@ public class DatabaseManager {
             while (resultset.next()) {
                 String foglalasKezdete = resultset.getString("Foglalas_kezdete");
                 String foglalasVege = resultset.getString("Foglalas_vege");
+                
+                 //hard code
+               
+                String[] kezdetDarabok = foglalasKezdete.split("-");
+                String  kezdetHonap= kezdetDarabok[1];
+                String[] vegDarabok = foglalasVege.split("-");
+                String  vegHonap= vegDarabok[1]; 
+                if(kezdetHonap.equals("04") || kezdetHonap.equals("05") || kezdetHonap.equals("06") || kezdetHonap.equals("07") || kezdetHonap.equals("08") || kezdetHonap.equals("09") || kezdetHonap.equals("10")){
+                    org.joda.time.format.DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
+                    LocalDate lDateKezdet = new LocalDate().parse(foglalasKezdete,format);
+                    lDateKezdet=lDateKezdet.plusDays(1);
+                    foglalasKezdete=lDateKezdet.toString("yyyy-MM-dd");
+               }
+                
+               if(vegHonap.equals("04") || vegHonap.equals("05") || vegHonap.equals("06") || vegHonap.equals("07") || vegHonap.equals("08") || vegHonap.equals("09") || vegHonap.equals("10")){
+                    org.joda.time.format.DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
+                    LocalDate lDateVeg = new LocalDate().parse(foglalasVege,format);
+                    lDateVeg=lDateVeg.plusDays(1);
+                    foglalasVege=lDateVeg.toString("yyyy-MM-dd");
+               }
+                
                 ArrayList<String> intervallumTMP = new ArrayList<>();
                 intervallumTMP.add(foglalasKezdete);
                 intervallumTMP.add(foglalasVege);
